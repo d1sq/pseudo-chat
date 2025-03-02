@@ -1,0 +1,40 @@
+<div class="profile-container">
+  <div class="profile-box">
+    <div class="header">
+      <button class="back-button" (click)="goBack()" title="Назад">←</button>
+      <h1>Настройки профиля</h1>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <div class="avatar">
+        <div class="avatar-placeholder">{{user?.username?.charAt(0) || 'A'}}</div>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Имя пользователя</label>
+        <input id="username" type="text" formControlName="username">
+        <div class="error" *ngIf="profileForm.get('username')?.errors?.['required'] && profileForm.get('username')?.touched">
+          Имя пользователя обязательно
+        </div>
+        <div class="error" *ngIf="profileForm.get('username')?.errors?.['minlength'] && profileForm.get('username')?.touched">
+          Минимальная длина 3 символа
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email">
+        <div class="error" *ngIf="profileForm.get('email')?.errors?.['required'] && profileForm.get('email')?.touched">
+          Email обязателен
+        </div>
+        <div class="error" *ngIf="profileForm.get('email')?.errors?.['email'] && profileForm.get('email')?.touched">
+          Некорректный email
+        </div>
+      </div>
+
+      <button type="submit" class="save-button" [disabled]="!profileForm.valid">
+        Сохранить
+      </button>
+    </form>
+  </div>
+</div> 

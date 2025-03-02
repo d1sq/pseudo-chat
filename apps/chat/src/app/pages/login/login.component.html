@@ -1,0 +1,31 @@
+<div class="login-container">
+  <div class="login-box">
+    <h1>Welcome to Chat</h1>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="input-group">
+        <input 
+          type="text" 
+          placeholder="Username" 
+          formControlName="username"
+          [class.error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched || error"
+        >
+        <div class="error-message" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+          Введите имя пользователя
+        </div>
+      </div>
+      <div class="input-group">
+        <input 
+          type="password" 
+          placeholder="Password" 
+          formControlName="password"
+          [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched || error"
+        >
+        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Пароль должен содержать минимум 4 символа
+        </div>
+      </div>
+      <div class="error-message" *ngIf="error">{{ error }}</div>
+      <button type="submit" class="login-button" [disabled]="loginForm.invalid">Войти</button>
+    </form>
+  </div>
+</div> 
