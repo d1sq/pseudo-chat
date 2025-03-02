@@ -1,45 +1,41 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { login } from '../../store/actions/auth.actions';
+import { selectAuthError, selectIsLoading } from '../../store/selectors/auth.selectors';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LoginCredentials } from '../../interfaces/auth.interfaces';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule
+  ]
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  
-  loginForm: FormGroup;
-  error = '';
+  private store = inject(Store);
 
-  constructor() {
-    this.loginForm = this.fb.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(4)]]
-    });
-  }
+  loginForm = this.fb.group({
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]]
+  });
 
-  async onSubmit() {
+  error$ = this.store.select(selectAuthError);
+  isLoading$ = this.store.select(selectIsLoading);
+
+  onSubmit(): void {
     if (this.loginForm.valid) {
-      try {
-        const result = await this.authService.login(this.loginForm.value);
-        if (result.success) {
-          this.router.navigate(['/']);
-        } else {
-          this.error = 'Неверный логин или пароль';
-        }
-      } catch (err) {
-        this.error = 'Произошла ошибка при входе';
-        console.error('Ошибка входа:', err);
-      }
+      const credentials: LoginCredentials = {
+        username: this.loginForm.value.username || '',
+        password: this.loginForm.value.password || ''
+      };
+      this.store.dispatch(login({ credentials }));
     }
   }
 } 

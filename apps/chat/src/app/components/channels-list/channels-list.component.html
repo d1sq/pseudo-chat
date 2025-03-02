@@ -1,0 +1,25 @@
+<section class="section" aria-labelledby="channels-heading">
+  <header class="section-header">
+    <h2 id="channels-heading" class="section-title">CHANNELS</h2>
+    <button class="add-btn" 
+            title="Add channel" 
+            aria-label="Add new channel">
+      <span aria-hidden="true">+</span>
+    </button>
+  </header>
+  <nav class="channels-nav" role="navigation" aria-labelledby="channels-title">
+    <ul class="channels-list" role="list">
+      <li *ngFor="let channel of channels || []" 
+          class="channel" 
+          [class.active]="channel.id === selectedChannelId"
+          (click)="channelSelect.emit(channel.id)"
+          (keydown.enter)="channelSelect.emit(channel.id)"
+          role="listitem"
+          [attr.aria-selected]="channel.id === selectedChannelId"
+          tabindex="0">
+        <span aria-hidden="true">#</span>
+        <span>{{channel.name}}</span>
+      </li>
+    </ul>
+  </nav>
+</section> 

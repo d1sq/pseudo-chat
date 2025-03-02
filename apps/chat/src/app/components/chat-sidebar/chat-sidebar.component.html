@@ -1,0 +1,17 @@
+<div class="sidebar">
+  <app-user-info
+    [currentUser]="currentUser"
+    [isDarkTheme]="isDarkTheme"
+    (themeToggle)="themeToggle.emit()"
+    (logout)="logout.emit()"
+    (profileNavigate)="profileNavigate.emit()">
+  </app-user-info>
+  
+  <app-channels-list 
+    [channels]="channels"
+    [selectedChannelId]="selectedChannelId"
+    (channelSelect)="channelSelect.emit($event)">
+  </app-channels-list>
+  
+  <app-users-list [users]="users"></app-users-list>
+</div> 

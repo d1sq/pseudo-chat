@@ -1,0 +1,33 @@
+<div class="chat-main">
+  <div class="chat-header">
+    <div class="channel-info">
+      <span>#</span>
+      <h2>{{selectedChannel?.name}}</h2>
+    </div>
+  </div>
+  
+  <div class="messages">
+    <div *ngFor="let message of messages" class="message">
+      <div class="message-avatar">{{message.fromUser.username[0]}}</div>
+      <div class="message-content">
+        <div class="message-header">
+          <span class="message-author">{{message.fromUser.username}}</span>
+          <span class="message-time">{{message.timestamp | date:'HH:mm'}}</span>
+        </div>
+        <div class="message-text">{{message.content}}</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="message-input">
+    <input 
+      type="text" 
+      [placeholder]="'Message #' + selectedChannel?.name"
+      [(ngModel)]="newMessage"
+      (keyup.enter)="sendMessage()"
+    >
+    <button class="send-btn" (click)="sendMessage()">
+      →
+    </button>
+  </div>
+</div> 

@@ -6,45 +6,45 @@ export const selectChatState = createFeatureSelector<ChatState>('chat');
 // User selectors
 export const selectCurrentUser = createSelector(
   selectChatState,
-  (state: ChatState) => state.currentUser
+  (state) => state.currentUser
 );
 
 export const selectUsers = createSelector(
   selectChatState,
-  (state: ChatState) => state.users
+  (state) => state.users
 );
 
 // Channel selectors
 export const selectChannels = createSelector(
   selectChatState,
-  (state: ChatState) => state.channels
+  (state) => state.channels
 );
 
 export const selectSelectedChannelId = createSelector(
   selectChatState,
-  (state: ChatState) => state.selectedChannelId
+  (state) => state.selectedChannelId
 );
 
 export const selectSelectedChannel = createSelector(
-  selectChannels,
+  selectChatState,
   selectSelectedChannelId,
-  (channels, selectedId) => channels.find(channel => channel.id === selectedId) || null
+  (state, selectedId) => state.channels.find(channel => channel.id === selectedId) || null
 );
 
 // Message selectors
-export const selectAllMessages = createSelector(
+export const selectMessages = createSelector(
   selectChatState,
-  (state: ChatState) => state.messages
+  (state) => state.messages
 );
 
 export const selectCurrentChannelMessages = createSelector(
-  selectAllMessages,
+  selectMessages,
   selectSelectedChannelId,
-  (messages, channelId) => messages.filter(message => message.channelId === channelId)
+  (messages, channelId) => channelId ? messages.filter(msg => msg.channelId === channelId) : []
 );
 
 // Theme selector
 export const selectIsDarkTheme = createSelector(
   selectChatState,
-  (state: ChatState) => state.isDarkTheme
+  (state) => state.isDarkTheme
 ); 

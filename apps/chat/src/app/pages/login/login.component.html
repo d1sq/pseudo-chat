@@ -1,31 +1,47 @@
 <div class="login-container">
   <div class="login-box">
-    <h1>Welcome to Chat</h1>
+    <h1>Вход в систему</h1>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="input-group">
-        <input 
-          type="text" 
-          placeholder="Username" 
+        <input
+          type="text"
           formControlName="username"
-          [class.error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched || error"
-        >
+          placeholder="Имя пользователя"
+          [class.error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+        />
         <div class="error-message" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
           Введите имя пользователя
         </div>
       </div>
+
       <div class="input-group">
-        <input 
-          type="password" 
-          placeholder="Password" 
+        <input
+          type="password"
           formControlName="password"
-          [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched || error"
-        >
+          placeholder="Пароль"
+          [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+        />
         <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          Пароль должен содержать минимум 4 символа
+          Введите пароль
         </div>
       </div>
-      <div class="error-message" *ngIf="error">{{ error }}</div>
-      <button type="submit" class="login-button" [disabled]="loginForm.invalid">Войти</button>
+
+      <div class="error-message" *ngIf="error$ | async">
+        {{ error$ | async }}
+      </div>
+
+      <button 
+        type="submit" 
+        class="login-button"
+        [disabled]="loginForm.invalid || (isLoading$ | async)"
+      >
+        <ng-container *ngIf="!(isLoading$ | async)">
+          Войти
+        </ng-container>
+        <ng-container *ngIf="isLoading$ | async">
+          Загрузка...
+        </ng-container>
+      </button>
     </form>
   </div>
 </div> 

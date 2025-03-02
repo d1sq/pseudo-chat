@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import * as ChatActions from '../actions/chat.actions';
 import { selectSelectedChannelId } from '../selectors/chat.selectors';
@@ -14,6 +14,33 @@ export class ChatEffects {
   private actions$ = inject(Actions);
   private store = inject(Store<AppState>);
   private chatService = inject(ChatService);
+
+  // При инициализации приложения загружаем тему из localStorage
+  initTheme$ = createEffect(() => 
+    this.actions$.pipe(
+      ofType(ChatActions.initApp),
+      map(() => {
+        const savedTheme = localStorage.getItem('theme');
+        return ChatActions.setTheme({ isDark: savedTheme === 'dark' });
+      })
+    )
+  );
+
+  // При изменении темы сохраняем её в localStorage
+  saveTheme$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChatActions.setTheme),
+      tap(({ isDark }) => {
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        if (isDark) {
+          document.body.classList.add('dark-theme');
+        } else {
+          document.body.classList.remove('dark-theme');
+        }
+      })
+    ),
+    { dispatch: false }
+  );
 
   loadUsers$ = createEffect(() => 
     this.actions$.pipe(

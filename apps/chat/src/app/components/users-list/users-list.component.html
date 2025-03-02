@@ -1,0 +1,14 @@
+<div class="section">
+  <div class="section-header">
+    <h3>USERS</h3>
+    <button class="add-btn" title="Add user">+</button>
+  </div>
+  <ul class="users-list">
+    <li *ngFor="let user of users || []" 
+        class="user"
+        [class.online]="user.isOnline">
+      <span>{{user.username}}</span>
+      <span class="status-indicator"></span>
+    </li>
+  </ul>
+</div> 

@@ -1,0 +1,26 @@
+<header class="user-info">
+  <div class="user-info-left">
+    <div class="user-name">{{currentUser?.username}}</div>
+    <div class="user-status">{{currentUser?.isOnline ? 'ONLINE' : 'OFFLINE'}}</div>
+  </div>
+  <div class="user-actions">
+    <button class="theme-btn" 
+            title="Сменить тему" 
+            (click)="themeToggle.emit()"
+            aria-label="Toggle theme">
+      <span aria-hidden="true">{{isDarkTheme ? '🌙' : '☀️'}}</span>
+    </button>
+    <button class="settings-btn" 
+            title="Настройки" 
+            (click)="profileNavigate.emit()"
+            aria-label="Open settings">
+      <span aria-hidden="true">⚙️</span>
+    </button>
+    <button class="logout-btn" 
+            title="Выйти" 
+            (click)="logout.emit()"
+            aria-label="Logout">
+      <span aria-hidden="true">↪️</span>
+    </button>
+  </div>
+</header> 

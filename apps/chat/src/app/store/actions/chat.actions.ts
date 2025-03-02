@@ -1,20 +1,31 @@
 import { createAction, props } from '@ngrx/store';
 import { User, Channel, Message } from '../../interfaces/chat.interfaces';
 
+// App initialization
+export const initApp = createAction(
+  '[Chat] Init App'
+);
+
 // User Actions
 export const setCurrentUser = createAction(
   '[Chat] Set Current User',
   props<{ user: User }>()
 );
 
-export const loadUsers = createAction('[Chat] Load Users');
+export const loadUsers = createAction(
+  '[Chat] Load Users'
+);
+
 export const loadUsersSuccess = createAction(
   '[Chat] Load Users Success',
   props<{ users: User[] }>()
 );
 
 // Channel Actions
-export const loadChannels = createAction('[Chat] Load Channels');
+export const loadChannels = createAction(
+  '[Chat] Load Channels'
+);
+
 export const loadChannelsSuccess = createAction(
   '[Chat] Load Channels Success',
   props<{ channels: Channel[] }>()

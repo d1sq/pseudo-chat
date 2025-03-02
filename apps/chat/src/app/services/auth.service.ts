@@ -1,76 +1,71 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { LoginCredentials, AuthResponse, User } from '../interfaces/auth.interfaces';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
-
-export interface LoginResult {
-  success: boolean;
-  error?: 'invalid_credentials';
-}
-
-export interface LoginCredentials {
-  username: string;
-  password: string;
-}
-
-export interface UserProfile {
-  id: string;
-  username: string;
-  email: string;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private http = inject(HttpClient);
   private router = inject(Router);
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-  isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
-
-  // Тестовые данные для входа
-  private readonly VALID_CREDENTIALS = {
-    username: 'admin',
-    password: 'admin'
-  };
+  
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      this.isAuthenticatedSubject.next(true);
+    // Проверяем наличие сохраненного пользователя при инициализации
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      this.currentUserSubject.next(JSON.parse(savedUser));
     }
   }
 
-  login(credentials: LoginCredentials): Promise<LoginResult> {
-    return new Promise((resolve) => {
-      if (credentials.username.toLowerCase() === this.VALID_CREDENTIALS.username && 
-          credentials.password === this.VALID_CREDENTIALS.password) {
-        const mockToken = 'mock-jwt-token';
-        localStorage.setItem('token', mockToken);
-        localStorage.setItem('user', JSON.stringify({
-          id: '1',
-          username: this.VALID_CREDENTIALS.username,
-          email: 'admin@example.com'
-        }));
-        this.isAuthenticatedSubject.next(true);
-        resolve({ success: true });
-      } else {
-        resolve({ success: false, error: 'invalid_credentials' });
-      }
-    });
+  login(credentials: LoginCredentials): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>('/api/auth/login', credentials);
   }
 
-  logout(): void {
+  getProfile(): Observable<User> {
+    return this.http.get<User>('/api/auth/profile');
+  }
+
+  // Сохранение токена в localStorage
+  saveToken(token: string): void {
+    localStorage.setItem('token', token);
+  }
+
+  // Получение токена из localStorage
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  // Удаление токена при выходе
+  removeToken(): void {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    this.isAuthenticatedSubject.next(false);
-    this.router.navigate(['/login']);
   }
 
+  // Проверка наличия токена
   isAuthenticated(): boolean {
-    return this.isAuthenticatedSubject.value;
+    return !!this.getToken();
   }
 
-  getCurrentUser(): UserProfile | null {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+  // Сохранение данных пользователя
+  saveUser(user: User): void {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
+  // Получение текущего пользователя
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  // Выход из системы
+  logout(): void {
+    this.removeToken();
+    localStorage.removeItem('user');
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
   }
 } 

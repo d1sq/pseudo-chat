@@ -11,13 +11,17 @@ import { AppState } from '../../store';
 import { ChatService } from '../../services/chat.service';
 import { Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
+import { ChatMainComponent } from '../../components/chat-main/chat-main.component';
+import { ChatSidebarComponent } from '../../components/chat-sidebar/chat-sidebar.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    ChatMainComponent,
+    ChatSidebarComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
@@ -89,10 +93,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.store.dispatch(ChatActions.loadMessages({ channelId }));
   }
   
-  sendMessage(): void {
-    if (this.newMessage.trim()) {
-      this.store.dispatch(ChatActions.sendMessage({ content: this.newMessage }));
-      this.newMessage = '';
+  sendMessage(message: string): void {
+    if (this.selectedChannel$ && message.trim()) {
+      // Здесь будет логика отправки сообщения
+      console.log('Sending message:', message);
     }
   }
 
