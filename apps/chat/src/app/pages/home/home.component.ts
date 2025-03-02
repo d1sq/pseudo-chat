@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   selectedChannel$: Observable<Channel | null>;
   messages$: Observable<Message[]>;
   isDarkTheme$: Observable<boolean>;
-  newMessage: string = '';
+  newMessage = '';
   
   private destroy$ = new Subject<void>();
   

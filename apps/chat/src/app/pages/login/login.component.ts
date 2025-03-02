@@ -18,7 +18,7 @@ export class LoginComponent {
   private router = inject(Router);
   
   loginForm: FormGroup;
-  error: string = '';
+  error = '';
 
   constructor() {
     this.loginForm = this.fb.group({

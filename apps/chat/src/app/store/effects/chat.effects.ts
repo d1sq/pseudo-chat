@@ -15,9 +15,6 @@ export class ChatEffects {
   private store = inject(Store<AppState>);
   private chatService = inject(ChatService);
 
-  constructor() {}
-
-
   loadUsers$ = createEffect(() => 
     this.actions$.pipe(
       ofType(ChatActions.loadUsers),

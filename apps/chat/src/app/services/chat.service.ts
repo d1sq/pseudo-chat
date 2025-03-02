@@ -45,8 +45,6 @@ export class ChatService {
   private selectedChannelSubject = new BehaviorSubject<Channel>(this.channels[0]);
   private messagesSubject = new BehaviorSubject<Message[]>(this.getChannelMessages(this.channels[0].id));
 
-  constructor() {}
-
   getCurrentUser(): User {
     return this.currentUser;
   }
