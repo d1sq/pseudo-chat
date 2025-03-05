@@ -9,8 +9,6 @@
     "build:frontend": "nx build chat",
     "build:backend": "nx build api",
     "build": "nx run-many --target=build --projects=api,chat --parallel=true",
-    "start:api": "nx serve api",
-    "seed:api": "nx run api:serve --args=\"seed\"",
     "test": "nx run-many --target=test --projects=api,chat --parallel=true",
     "test:frontend": "nx test chat",
     "test:watch": "nx test chat --watch",
