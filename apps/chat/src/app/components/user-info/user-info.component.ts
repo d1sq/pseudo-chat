@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { User } from '../../interfaces/user.interface';
+import { User } from '../../interfaces/chat.interface';
 
 @Component({
   selector: 'app-user-info',

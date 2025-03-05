@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { User, Channel, Message } from '../../interfaces/chat.interfaces';
+import { User, Channel, Message } from '../../interfaces/chat.interface';
 
 export const initApp = createAction('[Chat] Init App');
 

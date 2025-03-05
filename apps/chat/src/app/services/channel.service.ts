@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Channel, User } from '../interfaces/chat.interfaces';
+import { Channel, User } from '../interfaces/chat.interface';
 import { environment } from '../../environments/environment';
 import { map } from 'rxjs/operators';
 

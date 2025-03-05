@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Channel } from '../../interfaces/chat.interfaces';
+import { Channel } from '../../interfaces/chat.interface';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../store';
 import * as ChatSelectors from '../../store/selectors/chat.selectors';

@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { User, Channel, Message } from '../../interfaces/chat.interfaces';
+import { User, Channel, Message } from '../../interfaces/chat.interface';
 import * as ChatActions from '../actions/chat.actions';
 
 export const chatFeatureKey = 'chat';

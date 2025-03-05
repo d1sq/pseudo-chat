@@ -1,8 +1,8 @@
 <header class="user-info">
   <div class="user-info-left">
-    <div class="user-name">{{ currentUser?.username }}</div>
+    <div class="user-name">{{ currentUser?.username || 'Нет имени пользователя' }}</div>
   </div>
-  <div class="user-actions">
+<div class="user-actions">
     <button
       class="theme-btn"
       title="Сменить тему"

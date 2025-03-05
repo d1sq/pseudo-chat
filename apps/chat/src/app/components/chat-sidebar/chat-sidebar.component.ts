@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { User } from '../../interfaces/chat.interfaces';
+import { User } from '../../interfaces/chat.interface';
 import { UsersListComponent } from '../users-list/users-list.component';
 import { ChannelsListComponent } from '../channels-list/channels-list.component';
 import { UserInfoComponent } from '../user-info/user-info.component';

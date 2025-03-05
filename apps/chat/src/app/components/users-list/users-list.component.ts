@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { User } from '../../interfaces/chat.interfaces';
+import { User } from '../../interfaces/chat.interface';
 
 @Component({
   selector: 'app-users-list',

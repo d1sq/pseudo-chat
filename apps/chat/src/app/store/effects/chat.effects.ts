@@ -17,6 +17,7 @@ import { AppState } from '../index';
 import { ChannelService } from '../../services/channel.service';
 import { MessageService } from '../../services/message.service';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 
 @Injectable()
 export class ChatEffects {
@@ -25,6 +26,7 @@ export class ChatEffects {
   private channelService = inject(ChannelService);
   private messageService = inject(MessageService);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
 
   initTheme$ = createEffect(() =>
     this.actions$.pipe(
@@ -40,6 +42,20 @@ export class ChatEffects {
     this.actions$.pipe(
       ofType(ChatActions.initApp),
       map(() => ChatActions.loadChannels())
+    )
+  );
+
+  initCurrentUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChatActions.initApp),
+      map(() => {
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+          const user = JSON.parse(savedUser);
+          return ChatActions.setCurrentUser({ user });
+        }
+        return { type: '[Chat] No Saved User' };
+      })
     )
   );
 

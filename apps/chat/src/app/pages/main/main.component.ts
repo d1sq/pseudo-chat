@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { User, Channel, Message } from '../../interfaces/chat.interfaces';
+import { User, Channel, Message } from '../../interfaces/chat.interface';
 import * as ChatActions from '../../store/actions/chat.actions';
 import * as ChatSelectors from '../../store/selectors/chat.selectors';
 import { AppState } from '../../store';

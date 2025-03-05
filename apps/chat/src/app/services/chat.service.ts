@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { User, Channel, Message } from '../interfaces/chat.interfaces';
+import { User, Channel, Message } from '../interfaces/chat.interface';
 import { AppState } from '../store';
 import * as ChatSelectors from '../store/selectors/chat.selectors';
 import * as ChatActions from '../store/actions/chat.actions';

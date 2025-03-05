@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Channel, Message, User } from '../../interfaces/chat.interfaces';
+import { Channel, Message, User } from '../../interfaces/chat.interface';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import * as ChatActions from '../../store/actions/chat.actions';
