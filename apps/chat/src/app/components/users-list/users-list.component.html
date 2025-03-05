@@ -1,14 +1,35 @@
 <div class="section">
-  <div class="section-header">
-    <h3>USERS</h3>
-    <button class="add-btn" title="Add user">+</button>
+  <div
+    class="section-header"
+    (click)="toggleCollapse()"
+    (keydown.enter)="toggleCollapse()"
+    (keydown.space)="toggleCollapse()"
+    tabindex="0"
+    role="button"
+    [attr.aria-expanded]="!isCollapsed"
+  >
+    <div class="header-content">
+      <span class="collapse-icon" aria-hidden="true">{{
+        isCollapsed ? '►' : '▼'
+      }}</span>
+      <h3>USERS</h3>
+    </div>
   </div>
-  <ul class="users-list">
-    <li *ngFor="let user of users || []" 
-        class="user"
-        [class.online]="user.isOnline">
-      <span>{{user.username}}</span>
-      <span class="status-indicator"></span>
+  <ul class="users-list" [class.collapsed]="isCollapsed">
+    @if (users; as usersList) { @if (usersList.length > 0) { @for (user of
+    usersList; track user.id) {
+    <li class="user" [class.online]="user.isOnline">
+      <span>{{ user.username }}</span>
+      <span class="status-indicator" [attr.data-online]="user.isOnline"></span>
     </li>
+    } } @else {
+    <div class="placeholder-message">
+      <span>Нет активных пользователей</span>
+    </div>
+    } } @else {
+    <div class="placeholder-message">
+      <span>Загрузка пользователей...</span>
+    </div>
+    }
   </ul>
-</div> 
+</div>

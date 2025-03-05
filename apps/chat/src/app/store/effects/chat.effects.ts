@@ -1,22 +1,32 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import {
+  map,
+  tap,
+  withLatestFrom,
+  switchMap,
+  catchError,
+  mergeMap,
+} from 'rxjs/operators';
+import { of } from 'rxjs';
 
 import * as ChatActions from '../actions/chat.actions';
 import { selectSelectedChannelId } from '../selectors/chat.selectors';
 import { AppState } from '../index';
-import { ChatService } from '../../services/chat.service';
+import { ChannelService } from '../../services/channel.service';
+import { MessageService } from '../../services/message.service';
+import { UserService } from '../../services/user.service';
 
 @Injectable()
 export class ChatEffects {
-
   private actions$ = inject(Actions);
   private store = inject(Store<AppState>);
-  private chatService = inject(ChatService);
+  private channelService = inject(ChannelService);
+  private messageService = inject(MessageService);
+  private userService = inject(UserService);
 
-  // При инициализации приложения загружаем тему из localStorage
-  initTheme$ = createEffect(() => 
+  initTheme$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ChatActions.initApp),
       map(() => {
@@ -26,72 +36,222 @@ export class ChatEffects {
     )
   );
 
-  // При изменении темы сохраняем её в localStorage
-  saveTheme$ = createEffect(() =>
+  initApp$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ChatActions.setTheme),
-      tap(({ isDark }) => {
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        if (isDark) {
-          document.body.classList.add('dark-theme');
-        } else {
-          document.body.classList.remove('dark-theme');
-        }
-      })
-    ),
+      ofType(ChatActions.initApp),
+      map(() => ChatActions.loadChannels())
+    )
+  );
+
+  saveTheme$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ChatActions.setTheme),
+        tap(({ isDark }) => {
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          if (isDark) {
+            document.body.classList.add('dark-theme');
+          } else {
+            document.body.classList.remove('dark-theme');
+          }
+        })
+      ),
     { dispatch: false }
   );
 
-  loadUsers$ = createEffect(() => 
+  loadUsers$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ChatActions.loadUsers),
-      map(() => {
-        const users = this.chatService.getUsers();
-        return ChatActions.loadUsersSuccess({ users });
-      })
+      switchMap(() =>
+        this.userService.getUsers().pipe(
+          map((users) => ChatActions.loadUsersSuccess({ users })),
+          catchError((error) => {
+            console.error('Error loading users:', error);
+            return of({ type: '[Chat] Load Users Error' });
+          })
+        )
+      )
     )
   );
 
-  loadChannels$ = createEffect(() => 
+  loadChannels$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ChatActions.loadChannels),
-      map(() => {
-        const channels = this.chatService.getChannels();
-        return ChatActions.loadChannelsSuccess({ channels });
-      })
+      switchMap(() =>
+        this.channelService.getChannels().pipe(
+          switchMap((channels) => {
+            if (channels.length > 0) {
+              return of(
+                ChatActions.loadChannelsSuccess({ channels }),
+                ChatActions.selectChannel({ channelId: channels[0].id })
+              );
+            }
+            return of(ChatActions.loadChannelsSuccess({ channels }));
+          }),
+          catchError((error) => {
+            console.error('Error loading channels:', error);
+            return of({ type: '[Chat] Load Channels Error' });
+          })
+        )
+      )
     )
   );
 
-  loadMessages$ = createEffect(() => 
+  loadChannelUsers$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChatActions.loadChannelUsers),
+      switchMap(({ channelId }) =>
+        this.channelService.getChannelUsers(channelId).pipe(
+          map((users) => ChatActions.loadChannelUsersSuccess({ users })),
+          catchError((error) => {
+            console.error('Error loading channel users:', error);
+            return of({ type: '[Chat] Load Channel Users Error' });
+          })
+        )
+      )
+    )
+  );
+
+  loadMessages$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ChatActions.loadMessages),
-      map(({ channelId }) => {
-        const messages = this.chatService.getChannelMessages(channelId);
-        return ChatActions.loadMessagesSuccess({ messages });
-      })
+      switchMap(({ channelId }) =>
+        this.messageService.getMessagesByChannelId(channelId).pipe(
+          map((messages) => {
+            const normalizedMessages = messages.map((message) => ({
+              id: message.id,
+              content: message.content,
+              channelId,
+              fromUser: {
+                id: message.from_user.id,
+                username: message.from_user.username,
+                isOnline: message.from_user.is_online,
+              },
+              timestamp: message.timestamp,
+            }));
+            return ChatActions.loadMessagesSuccess({
+              messages: normalizedMessages,
+            });
+          }),
+          catchError((error) => {
+            console.error('Error loading messages:', error);
+            return of(
+              ChatActions.loadMessagesError({
+                error: error.error?.message || 'Не удалось загрузить сообщения',
+              })
+            );
+          })
+        )
+      )
     )
   );
 
-  sendMessage$ = createEffect(() => 
+  sendMessage$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ChatActions.sendMessage),
       withLatestFrom(this.store.select(selectSelectedChannelId)),
-      map(([{ content }, channelId]) => {
+      switchMap(([{ content }, channelId]) => {
         if (!channelId) {
           console.error('No channel selected');
-          return { type: '[Chat] Send Message Error' };
+          return of(ChatActions.sendMessageError({ error: 'Канал не выбран' }));
         }
-        
-        const message = {
-          id: Date.now().toString(),
-          content,
-          channelId,
-          fromUser: this.chatService.getCurrentUser(),
-          timestamp: new Date()
-        };
-        
-        return ChatActions.addMessage({ message });
+
+        return this.messageService.sendMessage(content, channelId).pipe(
+          map((message) => {
+            const normalizedMessage = {
+              id: message.id,
+              content: message.content,
+              channelId,
+              fromUser: {
+                id: message.from_user.id,
+                username: message.from_user.username,
+                isOnline: message.from_user.is_online,
+              },
+              timestamp: message.timestamp,
+            };
+            return ChatActions.addMessage({ message: normalizedMessage });
+          }),
+          catchError((error) => {
+            console.error('Error sending message:', error);
+            return of(
+              ChatActions.sendMessageError({
+                error: error.error?.message || 'Не удалось отправить сообщение',
+              })
+            );
+          })
+        );
       })
     )
   );
-} 
+
+  selectChannel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChatActions.selectChannel),
+      switchMap(({ channelId }) => [
+        ChatActions.loadMessages({ channelId }),
+        ChatActions.loadChannelUsers({ channelId }),
+      ])
+    )
+  );
+
+  createChannel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChatActions.createChannel),
+      switchMap(({ name }) =>
+        this.channelService.createChannel(name).pipe(
+          map((channel) => ChatActions.createChannelSuccess({ channel })),
+          catchError((error) =>
+            of(
+              ChatActions.createChannelError({
+                error: error.error?.message || 'Не удалось создать канал',
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
+  createChannelSuccess$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChatActions.createChannelSuccess),
+      map(() => ChatActions.loadChannels())
+    )
+  );
+
+  deleteChannel$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChatActions.deleteChannel),
+      mergeMap(({ channelId }: { channelId: string }) =>
+        this.channelService.deleteChannel(channelId).pipe(
+          map(() => ChatActions.deleteChannelSuccess({ channelId })),
+          catchError((error) =>
+            of(
+              ChatActions.deleteChannelError({
+                error: error.error?.message || 'Не удалось удалить канал',
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
+  deleteMessage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChatActions.deleteMessage),
+      mergeMap(({ messageId }: { messageId: string }) =>
+        this.messageService.deleteMessage(messageId).pipe(
+          map(() => ChatActions.deleteMessageSuccess({ messageId })),
+          catchError((error) =>
+            of(
+              ChatActions.deleteMessageError({
+                error: error.error?.message || 'Не удалось удалить сообщение',
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+}

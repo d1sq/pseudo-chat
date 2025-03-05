@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Message } from './message.entity';
+import { UserChannel } from './user-channel.entity';
 
 @Entity('channels')
 export class Channel {
@@ -9,15 +10,9 @@ export class Channel {
   @Column({ unique: true })
   name: string;
 
-  @Column({ nullable: true })
-  description?: string;
-
   @OneToMany(() => Message, message => message.channel)
   messages: Message[];
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => UserChannel, userChannel => userChannel.channel)
+  userChannels: UserChannel[];
 } 

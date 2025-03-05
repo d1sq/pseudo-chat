@@ -3,7 +3,6 @@ import { ChatState } from '../reducers/chat.reducer';
 
 export const selectChatState = createFeatureSelector<ChatState>('chat');
 
-// User selectors
 export const selectCurrentUser = createSelector(
   selectChatState,
   (state) => state.currentUser
@@ -14,7 +13,24 @@ export const selectUsers = createSelector(
   (state) => state.users
 );
 
-// Channel selectors
+export const selectChannelUsers = createSelector(
+  selectChatState,
+  (state) => state.channelUsers
+);
+
+export const selectOnlineUsers = createSelector(selectUsers, (users) =>
+  users.filter((user) => user.isOnline)
+);
+
+export const selectOfflineUsers = createSelector(selectUsers, (users) =>
+  users.filter((user) => !user.isOnline)
+);
+
+export const selectOnlineChannelUsers = createSelector(
+  selectChannelUsers,
+  (users) => users.filter((user) => user.isOnline)
+);
+
 export const selectChannels = createSelector(
   selectChatState,
   (state) => state.channels
@@ -28,10 +44,10 @@ export const selectSelectedChannelId = createSelector(
 export const selectSelectedChannel = createSelector(
   selectChatState,
   selectSelectedChannelId,
-  (state, selectedId) => state.channels.find(channel => channel.id === selectedId) || null
+  (state, selectedId) =>
+    state.channels.find((channel) => channel.id === selectedId) || null
 );
 
-// Message selectors
 export const selectMessages = createSelector(
   selectChatState,
   (state) => state.messages
@@ -40,11 +56,26 @@ export const selectMessages = createSelector(
 export const selectCurrentChannelMessages = createSelector(
   selectMessages,
   selectSelectedChannelId,
-  (messages, channelId) => channelId ? messages.filter(msg => msg.channelId === channelId) : []
+  (messages, channelId) =>
+    channelId ? messages.filter((msg) => msg.channelId === channelId) : []
 );
 
-// Theme selector
+export const selectIsLoadingMessages = createSelector(
+  selectChatState,
+  (state) => state.isLoadingMessages || false
+);
+
+export const selectMessagesError = createSelector(
+  selectChatState,
+  (state) => state.messagesError || null
+);
+
+export const selectSendMessageError = createSelector(
+  selectChatState,
+  (state) => state.sendMessageError || null
+);
+
 export const selectIsDarkTheme = createSelector(
   selectChatState,
   (state) => state.isDarkTheme
-); 
+);

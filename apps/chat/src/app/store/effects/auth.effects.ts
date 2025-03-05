@@ -16,15 +16,16 @@ export class AuthEffects {
   login$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.login),
-      exhaustMap(action =>
+      exhaustMap((action) =>
         this.authService.login(action.credentials).pipe(
-          map(response => {
+          map((response) => {
             this.authService.saveToken(response.access_token);
             this.authService.saveUser(response.user);
             return AuthActions.loginSuccess({ user: response.user });
           }),
           catchError((error: HttpErrorResponse) => {
-            const errorMessage = error.error?.message || 'Произошла ошибка при входе';
+            const errorMessage =
+              error.error?.message || 'Произошла ошибка при входе';
             return of(AuthActions.loginFailure({ error: errorMessage }));
           })
         )
@@ -51,4 +52,4 @@ export class AuthEffects {
       ),
     { dispatch: false }
   );
-} 
+}

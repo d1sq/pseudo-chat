@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Message } from './message.entity';
+import { UserChannel } from './user-channel.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity('users')
@@ -15,17 +16,11 @@ export class User {
   password: string;
 
   @Column({ default: true })
-  isOnline: boolean;
+  is_online: boolean;
 
-  @Column({ nullable: true })
-  avatar?: string;
-
-  @OneToMany(() => Message, message => message.user)
+  @OneToMany(() => Message, message => message.from_user)
   messages: Message[];
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => UserChannel, userChannel => userChannel.user)
+  userChannels: UserChannel[];
 } 

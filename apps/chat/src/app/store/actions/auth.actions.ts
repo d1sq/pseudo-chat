@@ -1,7 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { LoginCredentials, User } from '../../interfaces/auth.interfaces';
 
-// Login
 export const login = createAction(
   '[Auth] Login',
   props<{ credentials: LoginCredentials }>()
@@ -17,5 +16,4 @@ export const loginFailure = createAction(
   props<{ error: string }>()
 );
 
-// Logout
-export const logout = createAction('[Auth] Logout'); 
+export const logout = createAction('[Auth] Logout');

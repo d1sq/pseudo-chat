@@ -20,4 +20,15 @@ export interface Message {
 export interface UserChannel {
   userId: string;
   channelId: string;
-} 
+}
+
+export interface BackendMessage {
+  id: string;
+  content: string;
+  from_user: {
+    id: string;
+    username: string;
+    is_online: boolean;
+  };
+  timestamp: Date;
+}

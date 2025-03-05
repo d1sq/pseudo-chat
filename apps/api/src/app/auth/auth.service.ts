@@ -1,26 +1,18 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { User } from './entities/user.entity';
 import { LoginDto } from './dto/login.dto';
+import { UserService } from '../services/user.service';
 
 @Injectable()
 export class AuthService {
-  // Временное хранилище пользователей (в реальном приложении будет база данных)
-  private readonly users: User[] = [
-    new User({
-      id: 1,
-      username: 'admin',
-      // пароль: 'admin'
-      password: '$2a$10$VmlIZy/se6lrYowv88hXBe9EKCwssQlHNyGqkQwPT5hE6OTmbY346',
-      email: 'admin@google.com'
-    })
-  ];
-
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private userService: UserService
+  ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
-    const user = this.users.find(user => user.username === username);
+    const user = await this.userService.findByUsername(username);
     if (user && await bcrypt.compare(password, user.password)) {
       const { password, ...result } = user;
       return result;
@@ -31,7 +23,7 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.username, loginDto.password);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Неверный логин или пароль');
     }
 
     const payload = { username: user.username, sub: user.id };
@@ -39,13 +31,12 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
       user: {
         id: user.id,
-        username: user.username,
-        email: user.email
+        username: user.username
       }
     };
   }
 
-  async findById(id: number): Promise<User | undefined> {
-    return this.users.find(user => user.id === id);
+  async findById(id: string): Promise<any> {
+    return await this.userService.findById(id);
   }
 } 

@@ -17,6 +17,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    const { password, ...userWithoutPassword } = req.user;
+    return userWithoutPassword;
   }
 } 

@@ -1,6 +1,6 @@
 {
   "name": "@pseudo-chat-nx/source",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "start:frontend": "nx serve chat",
@@ -10,7 +10,11 @@
     "build:backend": "nx build api",
     "build": "nx run-many --target=build --projects=api,chat --parallel=true",
     "start:api": "nx serve api",
-    "seed:api": "nx run api:serve --args=\"seed\""
+    "seed:api": "nx run api:serve --args=\"seed\"",
+    "test": "nx run-many --target=test --projects=api,chat --parallel=true",
+    "test:frontend": "nx test chat",
+    "test:watch": "nx test chat --watch",
+    "test:coverage": "nx test chat --coverage"
   },
   "private": true,
   "devDependencies": {
@@ -36,7 +40,7 @@
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
     "@types/jest": "^29.5.12",
-    "@types/node": "18.16.9",
+    "@types/node": "^18.16.9",
     "@typescript-eslint/utils": "^8.19.0",
     "angular-eslint": "^19.0.2",
     "cypress": "^13.13.0",
@@ -72,9 +76,9 @@
     "@angular/router": "~19.1.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
-    "@nestjs/platform-express": "^10.0.0",
     "@nestjs/jwt": "^10.0.0",
     "@nestjs/passport": "^10.0.0",
+    "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.0",
     "@ngrx/effects": "^19.0.1",
     "@ngrx/store": "^19.0.1",

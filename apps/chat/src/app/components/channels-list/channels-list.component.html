@@ -1,25 +1,57 @@
-<section class="section" aria-labelledby="channels-heading">
-  <header class="section-header">
-    <h2 id="channels-heading" class="section-title">CHANNELS</h2>
-    <button class="add-btn" 
-            title="Add channel" 
-            aria-label="Add new channel">
+<section class="section">
+  <header
+    class="section-header"
+    (click)="toggleCollapse()"
+    (keydown.enter)="toggleCollapse()"
+    (keydown.space)="toggleCollapse()"
+    tabindex="0"
+    role="button"
+    [attr.aria-expanded]="!isCollapsed"
+  >
+    <div class="header-content">
+      <span class="collapse-icon" aria-hidden="true">{{
+        isCollapsed ? '►' : '▼'
+      }}</span>
+      <h2>CHANNELS</h2>
+    </div>
+    <button
+      class="add-channel-btn"
+      (click)="openCreateChannelDialog(); $event.stopPropagation()"
+      aria-label="Create new channel"
+    >
       <span aria-hidden="true">+</span>
     </button>
   </header>
-  <nav class="channels-nav" role="navigation" aria-labelledby="channels-title">
-    <ul class="channels-list" role="list">
-      <li *ngFor="let channel of channels || []" 
-          class="channel" 
-          [class.active]="channel.id === selectedChannelId"
-          (click)="channelSelect.emit(channel.id)"
-          (keydown.enter)="channelSelect.emit(channel.id)"
-          role="listitem"
-          [attr.aria-selected]="channel.id === selectedChannelId"
-          tabindex="0">
-        <span aria-hidden="true">#</span>
-        <span>{{channel.name}}</span>
+  <nav class="channels-nav" role="navigation" [class.collapsed]="isCollapsed">
+    <ul class="channels-list">
+      @if ((channels$ | async); as channels) { @if (channels.length > 0) { @for
+      (channel of channels; track channel.id) {
+      <li
+        class="channel"
+        [class.active]="channel.id === (selectedChannelId$ | async)"
+        (click)="selectChannel(channel.id)"
+        (keydown.enter)="selectChannel(channel.id)"
+        tabindex="0"
+      >
+        <span>#</span>
+        <span>{{ channel.name }}</span>
+        <button
+          class="delete-channel-btn"
+          (click)="deleteChannel($event, channel.id)"
+          aria-label="Удалить канал"
+        >
+          ×
+        </button>
       </li>
+      } } @else {
+      <div class="placeholder-message">
+        <span>Нет доступных каналов</span>
+      </div>
+      } } @else {
+      <div class="placeholder-message">
+        <span>Загрузка каналов...</span>
+      </div>
+      }
     </ul>
   </nav>
-</section> 
+</section>

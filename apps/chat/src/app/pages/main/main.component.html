@@ -1,0 +1,14 @@
+<div class="chat-container">
+  <app-chat-sidebar
+    [currentUser]="currentUser$ | async"
+    [isDarkTheme]="isDarkTheme$ | async"
+    [users]="users$ | async"
+    [channelUsers]="channelUsers$ | async"
+    (themeToggle)="toggleTheme()"
+    (logout)="logout()"
+    (profileNavigate)="goToProfile()"
+  >
+  </app-chat-sidebar>
+
+  <app-chat-main [selectedChannel]="selectedChannel$ | async"></app-chat-main>
+</div>

@@ -7,11 +7,13 @@
           type="text"
           formControlName="username"
           placeholder="Имя пользователя"
-          [class.error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+          [class.error]="usernameControl?.invalid && usernameControl?.touched"
         />
-        <div class="error-message" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
-          Введите имя пользователя
+        @if (usernameControl?.invalid && usernameControl?.touched) {
+        <div class="error-message">
+          {{ getUsernameErrorMessage() }}
         </div>
+        }
       </div>
 
       <div class="input-group">
@@ -19,29 +21,31 @@
           type="password"
           formControlName="password"
           placeholder="Пароль"
-          [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          [class.error]="passwordControl?.invalid && passwordControl?.touched"
         />
-        <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          Введите пароль
+        @if (passwordControl?.invalid && passwordControl?.touched) {
+        <div class="error-message">
+          {{ getPasswordErrorMessage() }}
         </div>
+        }
       </div>
 
-      <div class="error-message" *ngIf="error$ | async">
-        {{ error$ | async }}
+      <div class="server-error-container">
+        @if (error$ | async; as error) {
+        <div class="error-message server-error">
+          {{ error }}
+        </div>
+        }
       </div>
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         class="login-button"
         [disabled]="loginForm.invalid || (isLoading$ | async)"
       >
-        <ng-container *ngIf="!(isLoading$ | async)">
-          Войти
-        </ng-container>
-        <ng-container *ngIf="isLoading$ | async">
-          Загрузка...
-        </ng-container>
+        @if ((isLoading$ | async) === false) { Войти } @if (isLoading$ | async)
+        { Загрузка... }
       </button>
     </form>
   </div>
-</div> 
+</div>

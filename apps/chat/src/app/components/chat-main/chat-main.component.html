@@ -1,33 +1,78 @@
 <div class="chat-main">
+  @if (selectedChannel; as channel) {
   <div class="chat-header">
     <div class="channel-info">
       <span>#</span>
-      <h2>{{selectedChannel?.name}}</h2>
+      <h2>{{ channel.name }}</h2>
     </div>
   </div>
-  
+
   <div class="messages">
-    <div *ngFor="let message of messages" class="message">
-      <div class="message-avatar">{{message.fromUser.username[0]}}</div>
-      <div class="message-content">
-        <div class="message-header">
-          <span class="message-author">{{message.fromUser.username}}</span>
-          <span class="message-time">{{message.timestamp | date:'HH:mm'}}</span>
-        </div>
-        <div class="message-text">{{message.content}}</div>
-      </div>
+    @if ((isLoading$ | async) === true) {
+    <div class="loading">Загрузка сообщений...</div>
+    } @if (error$ | async; as error) {
+    <div class="error">
+      {{ error }}
     </div>
+    } @if ((isLoading$ | async) === false && (error$ | async) === null) {
+    <div class="messages-list">
+      @for (message of messages$ | async; track message.id) {
+      <div class="message">
+        <div class="message-avatar">{{ message.fromUser.username[0] }}</div>
+        <div class="message-content">
+          <div class="message-header">
+            <span class="message-author">{{ message.fromUser.username }}</span>
+            <span class="message-time">{{
+              message.timestamp | date : 'HH:mm'
+            }}</span>
+            @if (message.fromUser.id === (currentUser$ | async)?.id) {
+            <button
+              class="delete-message-btn"
+              (click)="deleteMessage(message.id)"
+              title="Удалить сообщение"
+            >
+              Удалить
+            </button>
+            }
+          </div>
+          <div class="message-text">{{ message.content }}</div>
+        </div>
+      </div>
+      }
+    </div>
+    }
   </div>
-  
+
   <div class="message-input">
-    <input 
-      type="text" 
-      [placeholder]="'Message #' + selectedChannel?.name"
+    <input
+      type="text"
+      [placeholder]="'Message #' + channel.name"
       [(ngModel)]="newMessage"
       (keyup.enter)="sendMessage()"
+    />
+    <button
+      class="send-btn"
+      (click)="sendMessage()"
+      [disabled]="!newMessage.trim()"
     >
-    <button class="send-btn" (click)="sendMessage()">
       →
     </button>
+    @if (sendError$ | async; as sendError) {
+    <div class="error send-error">
+      {{ sendError }}
+    </div>
+    }
   </div>
-</div> 
+  } @else {
+  <div class="chat-header">
+    <div class="channel-info">
+      <h2 class="empty-header">Выберите канал для общения</h2>
+    </div>
+  </div>
+  <div class="empty-state">
+    <div class="empty-content">
+      <p>Выберите канал из списка слева, чтобы начать общение</p>
+    </div>
+  </div>
+  }
+</div>

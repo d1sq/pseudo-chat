@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Request, UseGuards } from '@nestjs/common';
 import { ChannelService } from '../services/channel.service';
 import { Channel } from '../entities/channel.entity';
+import { User } from '../entities/user.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('channels')
@@ -11,9 +12,9 @@ export class ChannelController {
   @Post()
   async createChannel(
     @Body('name') name: string,
-    @Body('description') description?: string
+    @Request() req
   ): Promise<Channel> {
-    return await this.channelService.createChannel(name, description);
+    return await this.channelService.createChannel(name, req.user);
   }
 
   @Get()
@@ -22,12 +23,24 @@ export class ChannelController {
   }
 
   @Get(':id')
-  async getChannelById(@Param('id') id: string): Promise<Channel> {
+  async getChannelById(@Param('id') id: string): Promise<Channel | null> {
     return await this.channelService.getChannelById(id);
   }
 
+  @Get(':id/users')
+  async getChannelUsers(@Param('id') id: string): Promise<Partial<User>[]> {
+    const users = await this.channelService.getChannelUsers(id);
+    return users.map(user => {
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
+  }
+
   @Delete(':id')
-  async deleteChannel(@Param('id') id: string): Promise<void> {
-    await this.channelService.deleteChannel(id);
+  async deleteChannel(
+    @Param('id') id: string,
+    @Request() req
+  ): Promise<void> {
+    await this.channelService.deleteChannel(id, req.user.id);
   }
 } 

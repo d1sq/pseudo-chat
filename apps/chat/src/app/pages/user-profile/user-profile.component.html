@@ -7,29 +7,33 @@
 
     <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
       <div class="avatar">
-        <div class="avatar-placeholder">{{user?.username?.charAt(0) || 'A'}}</div>
+        <div class="avatar-placeholder">
+          {{ user?.username?.charAt(0) || 'A' }}
+        </div>
       </div>
 
       <div class="form-group">
         <label for="username">Имя пользователя</label>
-        <input id="username" type="text" formControlName="username">
-        <div class="error" *ngIf="profileForm.get('username')?.errors?.['required'] && profileForm.get('username')?.touched">
-          Имя пользователя обязательно
-        </div>
-        <div class="error" *ngIf="profileForm.get('username')?.errors?.['minlength'] && profileForm.get('username')?.touched">
-          Минимальная длина 3 символа
-        </div>
+        <input id="username" type="text" formControlName="username" />
+        @if (profileForm.get('username')?.errors?.['required'] &&
+        profileForm.get('username')?.touched) {
+        <div class="error">Имя пользователя обязательно</div>
+        } @if (profileForm.get('username')?.errors?.['minlength'] &&
+        profileForm.get('username')?.touched) {
+        <div class="error">Минимальная длина 3 символа</div>
+        }
       </div>
 
       <div class="form-group">
         <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email">
-        <div class="error" *ngIf="profileForm.get('email')?.errors?.['required'] && profileForm.get('email')?.touched">
-          Email обязателен
-        </div>
-        <div class="error" *ngIf="profileForm.get('email')?.errors?.['email'] && profileForm.get('email')?.touched">
-          Некорректный email
-        </div>
+        <input id="email" type="email" formControlName="email" />
+        @if (profileForm.get('email')?.errors?.['required'] &&
+        profileForm.get('email')?.touched) {
+        <div class="error">Email обязателен</div>
+        } @if (profileForm.get('email')?.errors?.['email'] &&
+        profileForm.get('email')?.touched) {
+        <div class="error">Некорректный email</div>
+        }
       </div>
 
       <button type="submit" class="save-button" [disabled]="!profileForm.valid">
@@ -37,4 +41,4 @@
       </button>
     </form>
   </div>
-</div> 
+</div>

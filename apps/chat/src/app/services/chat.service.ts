@@ -1,100 +1,47 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { User, Channel, Message } from '../interfaces/chat.interfaces';
+import { AppState } from '../store';
+import * as ChatSelectors from '../store/selectors/chat.selectors';
+import * as ChatActions from '../store/actions/chat.actions';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChatService {
-  private currentUser: User = {
-    id: '1',
-    username: 'admin',
-    isOnline: true
-  };
+  private store = inject(Store<AppState>);
 
-  private users: User[] = [
-    this.currentUser,
-    { id: '2', username: 'Maria', isOnline: true },
-    { id: '3', username: 'Max', isOnline: true },
-    { id: '4', username: 'Andrew', isOnline: false }
-  ];
-
-  private channels: Channel[] = [
-    { id: '1', name: 'general' },
-    { id: '2', name: 'summer' },
-    { id: '3', name: 'party' }
-  ];
-
-  private messages: Message[] = [
-    {
-      id: '1',
-      fromUser: this.users[1],
-      channelId: '1',
-      content: 'hey\nhow are you?',
-      timestamp: new Date('2024-03-20T10:00:00')
-    },
-    {
-      id: '2',
-      fromUser: this.users[2],
-      channelId: '1',
-      content: "hi, i'm work :(",
-      timestamp: new Date('2024-03-20T10:01:00')
-    }
-  ];
-
-  private selectedChannelSubject = new BehaviorSubject<Channel>(this.channels[0]);
-  private messagesSubject = new BehaviorSubject<Message[]>(this.getChannelMessages(this.channels[0].id));
-
-  getCurrentUser(): User {
-    return this.currentUser;
+  getCurrentUser(): Observable<User | null> {
+    return this.store.select(ChatSelectors.selectCurrentUser);
   }
 
-  getUsers(): User[] {
-    return this.users;
+  getUsers(): Observable<User[]> {
+    return this.store.select(ChatSelectors.selectUsers);
   }
 
-  getChannels(): Channel[] {
-    return this.channels;
+  getChannels(): Observable<Channel[]> {
+    return this.store.select(ChatSelectors.selectChannels);
   }
 
-  getSelectedChannel(): Observable<Channel> {
-    return this.selectedChannelSubject.asObservable();
+  getSelectedChannel(): Observable<Channel | null> {
+    return this.store.select(ChatSelectors.selectSelectedChannel);
   }
 
   getMessages(): Observable<Message[]> {
-    return this.messagesSubject.asObservable();
+    return this.store.select(ChatSelectors.selectCurrentChannelMessages);
+  }
+
+  getChannelUsers(): Observable<User[]> {
+    return this.store.select(ChatSelectors.selectChannelUsers);
   }
 
   selectChannel(channelId: string): void {
-    const channel = this.channels.find(c => c.id === channelId);
-    if (channel) {
-      this.selectedChannelSubject.next(channel);
-      this.messagesSubject.next(this.getChannelMessages(channelId));
-    }
+    this.store.dispatch(ChatActions.selectChannel({ channelId }));
   }
 
   sendMessage(content: string): void {
     if (!content.trim()) return;
-
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      fromUser: this.currentUser,
-      channelId: this.selectedChannelSubject.value.id,
-      content: content,
-      timestamp: new Date()
-    };
-
-    this.messages.push(newMessage);
-    this.messagesSubject.next(this.getChannelMessages(this.selectedChannelSubject.value.id));
+    this.store.dispatch(ChatActions.sendMessage({ content }));
   }
-
-  getChannelMessages(channelId: string): Message[] {
-    return this.messages
-      .filter(message => message.channelId === channelId)
-      .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
-  }
-
-  addMessage(message: Message): void {
-    this.messages.push(message);
-  }
-} 
+}

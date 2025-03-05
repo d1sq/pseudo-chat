@@ -20,13 +20,13 @@
   display: flex;
   align-items: center;
   margin-bottom: 24px;
-  
+
   h1 {
     margin: 0;
     font-size: 24px;
     color: var(--text-primary);
   }
-  
+
   .back-button {
     background: none;
     border: none;
@@ -36,7 +36,7 @@
     margin-right: 12px;
     cursor: pointer;
     transition: transform 0 ease;
-    
+
     &:hover {
       transform: scale(1.1);
     }
@@ -47,7 +47,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
-  
+
   .avatar-placeholder {
     width: 80px;
     height: 80px;
@@ -65,14 +65,14 @@
 
 .form-group {
   margin-bottom: 20px;
-  
+
   label {
     display: block;
     margin-bottom: 8px;
     color: var(--text-secondary);
     font-size: 14px;
   }
-  
+
   input {
     width: 100%;
     padding: 8px 12px;
@@ -81,13 +81,13 @@
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-size: 14px;
-    
+
     &:focus {
       outline: none;
       border-color: var(--accent-color);
     }
   }
-  
+
   .error {
     color: var(--error-color);
     font-size: 12px;
@@ -106,14 +106,14 @@
   color: white;
   margin-top: 24px;
   transition: all 0 ease;
-  
+
   &:hover:not(:disabled) {
     background-color: var(--accent-hover);
   }
-  
+
   &:disabled {
     opacity: 0.7;
     background-color: var(--text-secondary);
     cursor: not-allowed;
   }
-} 
+}

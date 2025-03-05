@@ -7,7 +7,7 @@ import { User } from '../../interfaces/user.interface';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './user-info.component.html',
-  styleUrls: ['./user-info.component.scss']
+  styleUrls: ['./user-info.component.scss'],
 })
 export class UserInfoComponent {
   @Input() currentUser: User | null = null;
@@ -16,4 +16,4 @@ export class UserInfoComponent {
   @Output() themeToggle = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
   @Output() profileNavigate = new EventEmitter<void>();
-} 
+}

@@ -7,7 +7,26 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .collapse-icon {
+    color: var(--text-secondary);
+    font-size: 10px;
+    transition: transform 0.2s ease;
+  }
+
   h3 {
     font-size: 12px;
     text-transform: uppercase;
@@ -29,7 +48,7 @@
     width: 24px;
     height: 24px;
     border-radius: 4px;
-    
+
     &:hover {
       background-color: var(--hover-bg);
       color: var(--accent-color);
@@ -41,6 +60,23 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+  max-height: 1000px;
+  opacity: 1;
+  overflow: hidden;
+
+  &.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+  }
+}
+
+.placeholder-message {
+  padding: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
 }
 
 .user {
@@ -53,20 +89,20 @@
   cursor: pointer;
   font-size: 14px;
   color: var(--text-primary);
-  
+
   &:hover {
     background-color: var(--hover-bg);
   }
-}
 
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: var(--offline-color);
-  margin-left: auto;
-}
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--offline-color);
+    margin-left: auto;
+  }
 
-.user.online .status-indicator {
-  background-color: var(--online-color);
-} 
+  &.online .status-indicator {
+    background-color: var(--online-color);
+  }
+}

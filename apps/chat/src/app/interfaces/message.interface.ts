@@ -5,4 +5,4 @@ export interface Message {
   content: string;
   fromUser: User;
   timestamp: Date;
-} 
+}

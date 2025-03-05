@@ -8,33 +8,33 @@ export const initialState: AuthState = {
   user: null,
   token: localStorage.getItem('token'),
   error: null,
-  isLoading: false
+  isLoading: false,
 };
 
 export const authReducer = createReducer(
   initialState,
-  
+
   on(AuthActions.login, (state) => ({
     ...state,
     isLoading: true,
-    error: null
+    error: null,
   })),
-  
+
   on(AuthActions.loginSuccess, (state, { user }) => ({
     ...state,
     isLoading: false,
     user,
-    error: null
+    error: null,
   })),
-  
+
   on(AuthActions.loginFailure, (state, { error }) => ({
     ...state,
     isLoading: false,
-    error
+    error,
   })),
-  
+
   on(AuthActions.logout, () => ({
     ...initialState,
-    token: null
+    token: null,
   }))
-); 
+);

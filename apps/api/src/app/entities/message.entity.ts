@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { User } from './user.entity';
 import { Channel } from './channel.entity';
 
@@ -7,18 +7,17 @@ export class Message {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text')
-  content: string;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'from_user' })
+  from_user: User;
 
-  @ManyToOne(() => User, user => user.messages)
-  user: User;
-
-  @ManyToOne(() => Channel, channel => channel.messages)
+  @ManyToOne(() => Channel)
+  @JoinColumn({ name: 'channel_id' })
   channel: Channel;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column('text')
+  content: string;
+  
+  @CreateDateColumn({ name: 'created_at' })
+  timestamp: Date;
 } 

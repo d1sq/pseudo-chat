@@ -6,5 +6,5 @@ export interface AppState {
 }
 
 export const reducers: ActionReducerMap<AppState> = {
-  chat: chatReducer
-}; 
+  chat: chatReducer,
+};

@@ -7,74 +7,127 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-}
-
-.section-title {
-  font-size: 12px;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  margin: 0;
-  font-weight: bold;
-  transition: color 0.2s ease;
-}
-
-.add-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
   padding: 4px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
   border-radius: 4px;
-  transition: all 0.2s ease;
-  
+  cursor: pointer;
+
   &:hover {
     background-color: var(--hover-bg);
-    color: var(--accent-color);
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--accent-color);
-    outline-offset: 2px;
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .collapse-icon {
+    color: var(--text-secondary);
+    font-size: 10px;
+    transition: transform 0.2s ease;
+  }
+
+  h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin: 0;
+    font-weight: bold;
+  }
+
+  .add-channel-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: var(--hover-bg);
+      color: var(--accent-color);
+    }
   }
 }
 
 .channels-nav {
+  transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+  max-height: 1000px;
+  opacity: 1;
+  overflow: hidden;
+
+  &.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+  }
+
   .channels-list {
     list-style: none;
     padding: 0;
     margin: 0;
   }
+}
 
-  .channel {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    border-radius: 4px;
-    margin-bottom: 2px;
-    cursor: pointer;
-    font-size: 14px;
+.placeholder-message {
+  padding: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.channel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  &.active {
+    background-color: var(--active-bg);
     color: var(--text-primary);
-    transition: all 0.2s ease;
-    
-    &:hover {
-      background-color: var(--hover-bg);
-    }
-    
-    &.active {
-      background-color: var(--active-bg);
-      font-weight: bold;
-    }
+  }
 
-    &:focus-visible {
-      outline: 2px solid var(--accent-color);
-      outline-offset: -2px;
+  span:first-child {
+    color: var(--text-secondary);
+  }
+
+  .delete-channel-btn {
+    visibility: hidden;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 4px 8px;
+    margin-left: auto;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    border-radius: 4px;
+
+    &:hover {
+      color: var(--error-color);
     }
   }
-} 
+
+  &:hover .delete-channel-btn,
+  &.active .delete-channel-btn {
+    visibility: visible;
+    opacity: 0.7;
+  }
+}
